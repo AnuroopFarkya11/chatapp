@@ -1,0 +1,39 @@
+[
+  {
+    "text": "Hii!",
+    "id": "12345",
+    "createAt": 1238380129,
+    "author": {
+      "username": "pooja26"
+    },
+    "image": "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+  },
+
+  {
+    "text": "Helloo!",
+    "id": "12345",
+    "createAt": 1238380129,
+    "author": {
+      "username": "pooja27"
+    }
+  },
+
+  {
+    "text": "Good Morning!",
+    "id": "12345",
+    "createAt": 1238380129,
+    "author": {
+      "username": "pooja26"
+    }
+  },
+
+  {
+    "text": "Good Morning!",
+    "id": "12345",
+    "createAt": 1238380129,
+    "author": {
+      "username": "pooja26"
+    },
+    "image": "https://thumbs.dreamstime.com/b/milky-way-galaxy-stars-space-dust-universe-milky-way-galaxy-stars-space-dust-universe-thung-kamang-187894499.jpg"
+  }
+]
