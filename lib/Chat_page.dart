@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
-
+import 'package:chatapp/Models/model_image.dart';
+import 'package:chatapp/repository/image_repository.dart';
+import 'package:chatapp/serices/Auth_Service.dart';
+import 'package:http/http.dart' as http;
 import 'package:chatapp/Models/Author.dart';
 import 'package:chatapp/Models/Chat_message_entity.dart';
 import 'package:chatapp/widgets/Chat_bubble.dart';
@@ -8,6 +12,7 @@ import 'package:chatapp/widgets/Chat_input.dart';
 import 'package:flutter/material.dart';
 import 'package:chatapp/Models/Chat_message_entity.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key}) : super(key: key);
@@ -17,27 +22,29 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  // List<Chat_Message_Entity> _messages = [
-  //
-  //   Chat_Message_Entity(
-  //       text: 'Hii!',
-  //       id: '1234',
-  //       createdAt: DateTime
-  //       .now()
-  //       .millisecondsSinceEpoch, author: Author(username: 'kukku')),
-  //
-  //
-  //   Chat_Message_Entity(text: 'Helllo', id: '1234', createdAt: DateTime.now().millisecondsSinceEpoch, author: Author(username: 'Khushi')),
-  //   Chat_Message_Entity(text: 'Kesee ho!\nAlooooo loo khushi...', id: '1234', createdAt: DateTime.now().millisecondsSinceEpoch, author: Author(username: 'kukku')),
-  //   Chat_Message_Entity(text: 'Allooooo Kukkku.....', id: '1234', createdAt: DateTime.now().millisecondsSinceEpoch, author: Author(username: 'Khushi')),
-  //   Chat_Message_Entity(text: 'kbb baaat hoogi apni iss app pr...?', id: '1234', createdAt: DateTime.now().millisecondsSinceEpoch, author: Author(username: 'Khushi')),
-  //   Chat_Message_Entity(text: 'jldddd!!', id: '1234', createdAt: DateTime.now().millisecondsSinceEpoch, author: Author(username: 'kukku')),
-  //
-  //
-  //
-  // ];
+
+
+
+  late TextEditingController chatTextController;
+  
+  Image_Repository image_repository = Image_Repository();
+
 
   List<Chat_Message_Entity> _messages=[];
+
+  onMessageSent(Chat_Message_Entity message)
+  {
+    print(message.text);
+    _messages.add(message);
+
+    setState(() {
+      print(_messages.length);
+
+    });
+
+  }
+
+
 
   _loadInitialMessage() async
   {
@@ -54,7 +61,6 @@ class _ChatPageState extends State<ChatPage> {
       _messages = chatMessages;
     });
 
-    print(chatMessages.length);
   }
 
 
@@ -63,24 +69,34 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     // TODO: implement initState
     _loadInitialMessage();
+    // image_repository.getNetwokImages();
     super.initState();
 
+    chatTextController = TextEditingController();
+    getUserName(context);
+  }
+
+  String? username;
+
+  Future<void> getUserName(BuildContext context) async{
+
+    username = await context.read<Auth_Service>().getUser();
   }
   @override
   Widget build(BuildContext context) {
-    double screen_height = MediaQuery
-        .of(context)
-        .size
-        .height;
 
-    _loadInitialMessage();
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+
+
+    print("Hello ${username}" );
+
+
+    return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           titleSpacing: 100,
           title: Text(
-            'Hello Hanuman ji',
+
+            "Hello ${username}",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.transparent,
@@ -88,7 +104,7 @@ class _ChatPageState extends State<ChatPage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  print('CLicked!');
+                  context.read<Auth_Service>().logoutUser();
                 },
                 icon: Icon(
                   Icons.logout,
@@ -98,20 +114,37 @@ class _ChatPageState extends State<ChatPage> {
         ),
         body: Column(
           children: [
+
+
+
+          //
+          //   FutureBuilder(
+          //   future: Image_Repository().getNetwokImages(),
+          //
+          // builder: (context,AsyncSnapshot <List<PixelfordImage>>snapshot){
+          //   if(snapshot.hasData)
+          //   {
+          //     return Image.network(snapshot.data![0].urlSmallSize);
+          //   }
+          //   return CircularProgressIndicator();
+          // }),
+            
             Expanded(
+
                 child: ListView.builder(
                     itemCount: _messages.length,
                     itemBuilder: (context, index) {
                       return Chat_bubble(
                           chat_message_entity:_messages[index],
-                          alignment: _messages[index].author.username=='pooja26'
+                          alignment: _messages[index].author.username== context.read<Auth_Service>().getUser()
                               ? Alignment.centerRight
                               : Alignment.centerLeft);
                     })),
-            Chat_input()
+
+            Chat_input(onSubmit: onMessageSent,textEditingController: chatTextController,)
           ],
         ),
-      ),
-    );
+      );
+
   }
 }

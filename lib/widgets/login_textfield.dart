@@ -17,6 +17,7 @@ class LoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: textEditingController,
       obscureText: hasAsterisk,
       decoration: InputDecoration(
           labelText: label_name,
